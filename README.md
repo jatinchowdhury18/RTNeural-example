@@ -1,5 +1,7 @@
 # RTNeural Example
 
+![CI](https://github.com/jatinchowdhury18/RTNeural-example/workflows/CI/badge.svg)
+
 This repository contains an example of how to use the 
 [RTNeural](https://github.com/jatinchowdhury18/RTNeural)
 library for running inference on a neural network
