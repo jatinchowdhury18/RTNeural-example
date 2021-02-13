@@ -7,6 +7,17 @@ in realtime. The example case shown use here is in the
 form of an audio plugin, built using the
 [JUCE](https://github.com/juce-framework/JUCE) framework.
 
+## Building from source
+To build from source, you must have CMake installed.
+```
+$ git clone --recursive https://github.com/jatinchowdhury18/RTNeural-example
+$ cd RTNeural-example
+$ cmake -Bbuild
+$ cmake --build build --config Release
+```
+
+Builds will be output to `build/RTNeuralExample_artefacts`.
+
 ## Creating the network
 
 The audio plugin functions as a distortion effect,
@@ -83,3 +94,7 @@ for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
     }
 }
 ```
+
+## License
+The code in this repository is licensed under
+the BSD 3-clause license. Enjoy!
