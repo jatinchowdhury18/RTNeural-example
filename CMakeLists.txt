@@ -4,11 +4,11 @@ project(ChowMatrix VERSION 1.1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 add_subdirectory(modules/JUCE)
-add_subdirectory(modules/RTNeural)
-include_directories(modules/RTNeural)
 
 # Set your choice of RTNeural backends here!
 set(RTNEURAL_STL ON CACHE BOOL "Use RTNeural with this backend" FORCE)
+add_subdirectory(modules/RTNeural)
+include_directories(modules/RTNeural)
 
 juce_add_plugin(RTNeuralExample
     COMPANY_NAME chowdsp
