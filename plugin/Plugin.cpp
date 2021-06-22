@@ -14,15 +14,20 @@ RTNeuralExamplePlugin::RTNeuralExamplePlugin() :
 #endif
     parameters (*this, nullptr, Identifier ("Parameters"),
     {
-        std::make_unique<AudioParameterFloat> ("gain_db", "Gain [dB]", -12.0f, 12.0f, 0.0f)
+        std::make_unique<AudioParameterFloat> ("gain_db", "Gain [dB]", -12.0f, 12.0f, 0.0f),
+        std::make_unique<AudioParameterChoice> ("model_type", "Model Type", StringArray { "Run-Time", "Compile-Time" }, 0)
     })
 {
     inGainDbParam = parameters.getRawParameterValue ("gain_db");
+    modelTypeParam = parameters.getRawParameterValue ("model_type");
 
     MemoryInputStream jsonStream (BinaryData::neural_net_weights_json, BinaryData::neural_net_weights_jsonSize, false);
     auto jsonInput = nlohmann::json::parse (jsonStream.readEntireStreamAsString().toStdString());
     neuralNet[0] = RTNeural::json_parser::parseJson<float> (jsonInput);
     neuralNet[1] = RTNeural::json_parser::parseJson<float> (jsonInput);
+
+    neuralNetT[0].parseJson (jsonInput);
+    neuralNetT[1].parseJson (jsonInput);
 }
 
 RTNeuralExamplePlugin::~RTNeuralExamplePlugin()
@@ -103,6 +108,9 @@ void RTNeuralExamplePlugin::prepareToPlay (double sampleRate, int samplesPerBloc
 
     neuralNet[0]->reset();
     neuralNet[1]->reset();
+
+    neuralNetT[0].reset();
+    neuralNetT[1].reset();
 }
 
 void RTNeuralExamplePlugin::releaseResources()
@@ -136,13 +144,30 @@ void RTNeuralExamplePlugin::processBlock (AudioBuffer<float>& buffer, MidiBuffer
     inputGain.setGainDecibels (inGainDbParam->load() + 25.0f);
     inputGain.process (context);
 
-    for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
+    if (static_cast<int> (modelTypeParam->load()) == 0)
     {
-        auto* x = buffer.getWritePointer (ch);
-        for (int n = 0; n < buffer.getNumSamples(); ++n)
+        // use run-time model
+        for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
         {
-            float input[] = { x[n] };
-            x[n] = neuralNet[ch]->forward (input);
+            auto* x = buffer.getWritePointer (ch);
+            for (int n = 0; n < buffer.getNumSamples(); ++n)
+            {
+                float input[] = { x[n] };
+                x[n] = neuralNet[ch]->forward (input);
+            }
+        }
+    }
+    else
+    {
+        // use compile-time model
+        for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
+        {
+            auto* x = buffer.getWritePointer (ch);
+            for (int n = 0; n < buffer.getNumSamples(); ++n)
+            {
+                float input[] = { x[n] };
+                x[n] = neuralNetT[ch].forward (input);
+            }
         }
     }
 

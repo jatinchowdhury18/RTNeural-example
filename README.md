@@ -34,6 +34,10 @@ and loads the neural network at run-time.
 
 The C++ implementation is fairly simple, but there
 are a few code snippets worth drawing attention to.
+Note that the documentation below describes the
+neural net implementation using RTNeural's run-time
+API. The code in `src/` also includes a similar
+example using RTNeural's compile-time API.
 
 ### Linking to RTNeural with CMake
 

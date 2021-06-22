@@ -47,7 +47,21 @@ private:
     std::atomic<float>* inGainDbParam = nullptr;
     dsp::Gain<float> inputGain;
     
+    // models
+    std::atomic<float>* modelTypeParam = nullptr;
+
+    // example of model defined at run-time
     std::unique_ptr<RTNeural::Model<float>> neuralNet[2];
+
+    // example of model defined at compile-time
+    RTNeural::ModelT<float, 1, 1,
+        RTNeural::DenseT<float, 1, 8>,
+        RTNeural::TanhActivationT<float, 8>,
+        RTNeural::Conv1DT<float, 8, 4, 3, 2>,
+        RTNeural::TanhActivationT<float, 4>,
+        RTNeural::GRULayerT<float, 4, 8>,
+        RTNeural::DenseT<float, 8, 1>
+    > neuralNetT[2];
 
     dsp::ProcessorDuplicator<dsp::IIR::Filter<float>, dsp::IIR::Coefficients<float>> dcBlocker;
 
