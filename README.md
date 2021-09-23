@@ -36,18 +36,17 @@ The C++ implementation is fairly simple, but there
 are a few code snippets worth drawing attention to.
 Note that the documentation below describes the
 neural net implementation using RTNeural's run-time
-API. The code in `src/` also includes a similar
-example using RTNeural's compile-time API.
+API. The code in `plugin/` also contains example
+code for using RTNeural's compile-time API.
 
 ### Linking to RTNeural with CMake
 
 CMakeLists.txt:
 ```cmake
-add_subdirectory(modules/RTNeural)
-include_directories(modules/RTNeural)
-
 # Set your choice of RTNeural backends here!
 set(RTNEURAL_STL ON CACHE BOOL "Use RTNeural with this backend" FORCE)
+add_subdirectory(modules/RTNeural)
+include_directories(modules/RTNeural)
 ...
 target_link_libraries(RTNeuralExample PUBLIC
     ...
